@@ -157,6 +157,27 @@
 ./CI/CD/test.sh
 ```
 
+#### Явный запуск unit и integration тестов (PHPUnit)
+
+```bash
+cd backend
+composer install
+
+# Все unit-тесты
+./bin/phpunit tests/Unit
+
+# Все integration-тесты
+./bin/phpunit tests/Integration
+
+# Полный прогон backend тестов (unit + integration)
+./bin/phpunit tests
+```
+
+> Если запускаете через Docker, эквивалентная команда:
+```bash
+docker-compose exec php ./bin/phpunit tests
+```
+
 #### Рекомендации по запуску тестов
 
 1. **Сначала поднимите окружение**
@@ -346,6 +367,27 @@ Access points:
 ### Tests
 ```bash
 ./CI/CD/test.sh
+```
+
+#### Explicit unit and integration test runs (PHPUnit)
+
+```bash
+cd backend
+composer install
+
+# Unit tests only
+./bin/phpunit tests/Unit
+
+# Integration tests only
+./bin/phpunit tests/Integration
+
+# Full backend test run (unit + integration)
+./bin/phpunit tests
+```
+
+> If you run tests inside Docker, equivalent command:
+```bash
+docker-compose exec php ./bin/phpunit tests
 ```
 
 #### Test run recommendations
