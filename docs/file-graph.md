@@ -27,12 +27,14 @@ graph TD
         B_Config["config/"]
         B_Public["public/"]
         B_Src["src/"]
+        B_Tests["tests/"]
         B_Kernel["Kernel.php"]
         B_Composer["composer.json"]
     end
     Backend --> B_Config
     Backend --> B_Public
     Backend --> B_Src
+    Backend --> B_Tests
     Backend --> B_Kernel
     Backend --> B_Composer
 
@@ -79,6 +81,32 @@ graph TD
     end
     Strategies --> TransStrategy
     Strategies --> PackStrategy
+
+    subgraph Backend_Tests_ [Backend Tests]
+        direction TB
+        B_UnitTests["Unit/"]
+        B_IntegrationTests["Integration/"]
+        B_TestBootstrap["bootstrap.php"]
+    end
+    B_Tests --> B_UnitTests
+    B_Tests --> B_IntegrationTests
+    B_Tests --> B_TestBootstrap
+
+    subgraph Backend_UnitTests_ [Unit Tests]
+        direction TB
+        UT_ShippingService["Application/ShippingServiceTest.php"]
+        UT_PackGroup["Infrastructure/Strategy/PackGroupStrategyTest.php"]
+        UT_TransCompany["Infrastructure/Strategy/TransCompanyStrategyTest.php"]
+    end
+    B_UnitTests --> UT_ShippingService
+    B_UnitTests --> UT_PackGroup
+    B_UnitTests --> UT_TransCompany
+
+    subgraph Backend_IntegrationTests_ [Integration Tests]
+        direction TB
+        IT_ShippingController["Infrastructure/Controller/ShippingControllerTest.php"]
+    end
+    B_IntegrationTests --> IT_ShippingController
 
     subgraph Frontend_ [Frontend]
         direction TB
