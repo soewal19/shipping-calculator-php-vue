@@ -157,6 +157,44 @@
 ./CI/CD/test.sh
 ```
 
+#### Рекомендации по запуску тестов
+
+1. **Сначала поднимите окружение**
+   - Перед E2E-тестами убедитесь, что контейнеры запущены:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+2. **Проверяйте доступность приложения перед стартом E2E**
+   - Frontend должен открываться на `http://localhost:8080`.
+   - API должен отвечать на `http://localhost:8080/api/shipping/calculate`.
+
+3. **Рекомендуемый порядок**
+   - Сначала backend/unit/integration (если добавлены), затем E2E.
+   - Базовый сценарий:
+   ```bash
+   ./CI/CD/test.sh
+   ```
+
+4. **Локальный запуск только E2E (для отладки UI)**
+   ```bash
+   cd E2E
+   npm install
+   npx playwright test
+   npx playwright test --ui
+   ```
+
+5. **Запуск отдельного теста/спека**
+   ```bash
+   cd E2E
+   npx playwright test tests/shipping.spec.ts
+   ```
+
+6. **Артефакты после падений**
+   - Отчёты: `E2E/playwright-report/`
+   - Детали прогонов: `E2E/test-results/`
+   - Для CI удобно публиковать `playwright-report` как artifact.
+
 ---
 
 ## EN
@@ -309,4 +347,42 @@ Access points:
 ```bash
 ./CI/CD/test.sh
 ```
+
+#### Test run recommendations
+
+1. **Start the environment first**
+   - Ensure containers are running before E2E tests:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+2. **Verify app availability before E2E**
+   - Frontend should be available at `http://localhost:8080`.
+   - API should respond at `http://localhost:8080/api/shipping/calculate`.
+
+3. **Recommended execution order**
+   - Run backend/unit/integration tests first (if present), then E2E.
+   - Basic flow:
+   ```bash
+   ./CI/CD/test.sh
+   ```
+
+4. **Run only E2E locally (UI debugging)**
+   ```bash
+   cd E2E
+   npm install
+   npx playwright test
+   npx playwright test --ui
+   ```
+
+5. **Run a single spec/test file**
+   ```bash
+   cd E2E
+   npx playwright test tests/shipping.spec.ts
+   ```
+
+6. **Failure artifacts**
+   - Reports: `E2E/playwright-report/`
+   - Detailed run artifacts: `E2E/test-results/`
+   - In CI, publish `playwright-report` as a build artifact.
 
