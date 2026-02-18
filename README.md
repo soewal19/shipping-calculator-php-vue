@@ -1,227 +1,312 @@
-# Калькулятор стоимости доставки (Shipping Cost Calculator)
+# Shipping Cost Calculator / Калькулятор стоимости доставки
 
-## О проекте
-Данный проект представляет собой веб-приложение для расчета стоимости доставки различными перевозчиками (TransCompany, PackGroup). 
-Реализован с использованием Symfony (Backend) и Vue.js (Frontend), упакован в Docker контейнеры.
+> Документация ниже двуязычная: сначала **русский**, затем **English**.
 
-## Структура проекта
+---
 
-```
-shipping-calculator/
-├── backend/                # Symfony API (Core logic)
-│   ├── config/             # Configuration files
-│   ├── src/                # Source code
-│   │   ├── Application/    # Application Layer (Services)
-│   │   ├── Domain/         # Domain Layer (Models, Interfaces)
-│   │   └── Infrastructure/ # Infrastructure Layer (Controllers, WebSocket, Strategies)
-│   └── ...
-├── frontend/               # Vue.js UI
-│   ├── src/                # Vue components and logic
-│   └── ...
-├── docker/                 # Docker config (php, nginx, ui)
-├── docs/                   # Documentation (C4 models, API spec)
-├── CI/CD/                  # Deployment & Test scripts
-├── E2E/                    # Playwright End-to-End tests
-├── logs/                   # Application logs
-├── docker-compose.yml      # Orchestration
-└── README.md
-```
+## RU
 
+### О проекте
+Веб-приложение для расчёта стоимости доставки по двум перевозчикам:
+- `transcompany` — фиксированная стоимость по порогу веса;
+- `packgroup` — линейный расчёт (1 EUR за кг).
 
-## Требования
-- Docker
-- Docker Compose
+Стек: **Symfony (backend)** + **Vue 3 (frontend)** + **Docker** + **Playwright E2E**.
 
-## Установка и запуск
-
-1. **Клонирование репозитория**
+### Быстрый запуск
+1. Соберите фронтенд:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   cd frontend
+   npm install
+   npm run build
    ```
-
-2. **Запуск контейнеров**
+2. Поднимите контейнеры:
    ```bash
    docker-compose up -d --build
    ```
 
-3. **Доступ к приложению**
-   - Frontend: [http://localhost:8080](http://localhost:8080)
-   - API: [http://localhost:8080/api](http://localhost:8080/api) (через Nginx прокси)
+Доступ:
+- Frontend: `http://localhost:8080`
+- API: `http://localhost:8080/api`
+- Swagger UI: `http://localhost:8080/api/doc`
+- OpenAPI JSON: `http://localhost:8080/api/doc.json`
+- WebSocket: `ws://localhost:8081`
 
-4. **Запуск тестов**
-   
-   Проект содержит скрипты для запуска тестов. Основной скрипт запускает Unit тесты бэкенда и E2E тесты фронтенда.
+### Полное дерево файлов проекта (с описанием)
 
-   **Автоматический запуск всех тестов:**
-   ```bash
-   ./CI/CD/test.sh
-   ```
+> Ниже приведено полное дерево **проектных и конфигурационных файлов**. Большие автогенерируемые артефакты (например, `E2E/node_modules`, `E2E/playwright-report`, `E2E/test-results`) отмечены как служебные каталоги и не разворачиваются построчно.
 
-   **Запуск E2E тестов (Playwright) вручную:**
-   Для детальной отладки UI тестов можно использовать следующие команды:
-   ```bash
-   cd E2E
-   npm install        # Установка зависимостей (первый запуск)
-   npx playwright test # Запуск тестов в headless режиме
-   npx playwright test --ui # Запуск в интерактивном режиме с UI
-   ```
+```text
+.
+├── .gitignore                                 # Игнорируемые Git файлы
+├── Coding Test — Junior PHP Developer (Symfony) (1).pdf  # Исходное тестовое задание
+├── docker-compose.yml                         # Оркестрация контейнеров
+├── EXECUTION_REPORT.md                        # Отчёт по выполнению работ
+├── LICENSE                                    # Лицензия проекта
+├── README.md                                  # Основная документация (этот файл)
+├── deploy_to_github.ps1                       # PowerShell-скрипт публикации в GitHub
+├── force_push.ps1                             # PowerShell-скрипт принудительного пуша
+│
+├── backend/                                   # Backend (Symfony)
+│   ├── .env                                   # Переменные окружения (base)
+│   ├── .env.dev                               # Переменные окружения dev
+│   ├── .gitignore                             # Игнор файлов backend
+│   ├── composer.json                          # PHP-зависимости и автозагрузка
+│   ├── composer.lock                          # Зафиксированные версии зависимостей
+│   ├── symfony.lock                           # Lock Symfony recipes
+│   ├── bin/
+│   │   └── console                            # Symfony CLI entrypoint
+│   ├── config/
+│   │   ├── bundles.php                        # Регистрация Symfony bundles
+│   │   ├── preload.php                        # Preload-конфигурация
+│   │   ├── routes.yaml                        # Маршруты приложения
+│   │   ├── services.yaml                      # DI-контейнер и сервисы
+│   │   ├── packages/
+│   │   │   ├── cache.yaml                     # Кэш
+│   │   │   ├── framework.yaml                 # Framework settings
+│   │   │   ├── monolog.yaml                   # Логирование
+│   │   │   ├── nelmio_api_doc.yaml            # Swagger/OpenAPI
+│   │   │   ├── nelmio_cors.yaml               # CORS
+│   │   │   ├── routing.yaml                   # Routing package settings
+│   │   │   └── validator.yaml                 # Валидация
+│   │   └── routes/
+│   │       ├── framework.yaml                 # Framework routes
+│   │       └── nelmio_api_doc.yaml            # Routes для API docs
+│   ├── logs/                                  # Логи backend
+│   ├── public/
+│   │   └── index.php                          # Front controller
+│   ├── src/
+│   │   ├── Kernel.php                         # Ядро Symfony
+│   │   ├── Application/
+│   │   │   └── ShippingService.php            # Сервис расчёта и выбор стратегии
+│   │   ├── Controller/
+│   │   │   └── .gitignore                     # Заглушка каталога
+│   │   ├── Domain/
+│   │   │   ├── ShippingStrategyInterface.php  # Контракт стратегии расчёта
+│   │   │   └── Model/
+│   │   │       └── ShippingRequest.php        # DTO/модель входных данных + validation
+│   │   └── Infrastructure/
+│   │       ├── Controller/
+│   │       │   ├── ApiDocController.php       # Контроллер/точка API-документации
+│   │       │   └── ShippingController.php     # REST endpoint расчёта доставки
+│   │       ├── EventListener/
+│   │       │   └── CorsAccessControlListener.php # CORS ACL (blacklist/whitelist)
+│   │       ├── Strategy/
+│   │       │   ├── PackGroupStrategy.php      # Стратегия PackGroup
+│   │       │   └── TransCompanyStrategy.php   # Стратегия TransCompany
+│   │       └── WebSocket/
+│   │           ├── RunWebSocketServerCommand.php # Symfony command запуска WS сервера
+│   │           └── ShippingMessageHandler.php # WS-обработчик расчётов
+│   └── var/                                   # Кэш/временные данные Symfony
+│
+├── CI/
+│   └── CD/
+│       ├── deploy.sh                          # Скрипт деплоя
+│       └── test.sh                            # Скрипт прогонки тестов
+│
+├── docker/
+│   ├── nginx/
+│   │   ├── default.conf                       # Nginx-конфигурация (reverse proxy + static)
+│   │   └── Dockerfile                         # Образ nginx
+│   ├── php/
+│   │   └── Dockerfile                         # Образ php-fpm/symfony
+│   └── ui/
+│       └── Dockerfile                         # Образ frontend/ui
+│
+├── docs/
+│   ├── api.yaml                               # OpenAPI спецификация
+│   ├── c4-model.md                            # C4 Level 1-3 + обзор Level 4
+│   ├── c4-level4-code.md                      # Подробная реализация C4 Level 4 (Code)
+│   └── file-graph.md                          # Mermaid-граф структуры проекта
+│
+├── E2E/
+│   ├── package.json                           # Зависимости E2E
+│   ├── package-lock.json                      # Lock-файл E2E
+│   ├── playwright.config.ts                   # Конфигурация Playwright
+│   ├── README.md                              # Документация по E2E
+│   ├── tests/
+│   │   └── shipping.spec.ts                   # E2E тесты калькулятора
+│   ├── playwright-report/                     # Автогенерируемые HTML-отчёты Playwright
+│   └── test-results/                          # Автогенерируемые артефакты тестов
+│
+├── frontend/
+│   ├── index.html                             # HTML entrypoint
+│   ├── package.json                           # Зависимости frontend
+│   ├── package-lock.json                      # Lock-файл frontend
+│   ├── postcss.config.js                      # PostCSS-конфиг
+│   ├── tailwind.config.js                     # Tailwind-конфиг
+│   ├── vite.config.js                         # Vite-конфиг
+│   └── src/
+│       ├── App.vue                            # Корневой Vue-компонент
+│       ├── main.js                            # Инициализация Vue-приложения
+│       ├── style.css                          # Глобальные стили
+│       └── components/
+│           └── ShippingCalculator.vue         # Основной UI-калькулятор (HTTP + WS)
+│
+├── logs/                                      # Общие/внешние логи проекта
+├── DeployFinal/                               # Временная/служебная папка деплоя (сейчас пусто)
+└── DeployTemp/                                # Временная/служебная папка деплоя (сейчас пусто)
+```
 
-## Архитектура
-Проект построен по принципам чистой архитектуры и SOLID.
-Используется паттерн **Strategy** для реализации логики расчета стоимости различных перевозчиков, что позволяет легко добавлять новых без изменения существующего кода.
+### C4-документация
+- Уровни 1–3: `docs/c4-model.md`
+- Реализация 4-го уровня (Code): `docs/c4-level4-code.md`
 
-### Реализация SOLID и Интерфейсов
-Принципы SOLID полностью соблюдены для обеспечения гибкости и расширяемости системы:
-
-- **Single Responsibility Principle (SRP)**:
-  - `ShippingController`: Отвечает только за обработку HTTP запросов.
-  - `ShippingService`: Управляет выбором стратегии.
-  - Стратегии (`TransCompanyStrategy`, `PackGroupStrategy`): Содержат только логику расчета цены.
-
-- **Open/Closed Principle (OCP)**:
-  - Система открыта для расширения: новый перевозчик добавляется созданием нового класса стратегии.
-  - Система закрыта для модификации: код сервиса не меняется при добавлении новых перевозчиков.
-
-- **Liskov Substitution Principle (LSP)**:
-  - Все стратегии реализуют интерфейс `ShippingStrategyInterface` и взаимозаменяемы.
-
-- **Interface Segregation Principle (ISP)**:
-  - Интерфейс `ShippingStrategyInterface` содержит только необходимые методы (`calculate`, `supports`).
-
-- **Dependency Inversion Principle (DIP)**:
-  - `ShippingService` зависит от абстракции (`ShippingStrategyInterface`), а не от конкретных реализаций.
-
-Подробная документация архитектуры доступна в [docs/c4-model.md](docs/c4-model.md).
-Описание API доступно в [docs/api.yaml](docs/api.yaml).
+### Тесты
+```bash
+./CI/CD/test.sh
+```
 
 ---
 
-# Shipping Cost Calculator (English Version)
+## EN
 
-## About
-This project is a web application for calculating shipping costs for various carriers (TransCompany, PackGroup). 
-Implemented using Symfony (Backend) and Vue.js (Frontend), packaged in Docker containers.
+### About
+This is a shipping cost calculator web app for two carriers:
+- `transcompany` — threshold-based fixed pricing;
+- `packgroup` — linear pricing (1 EUR per kg).
 
-## Project Structure
+Stack: **Symfony (backend)** + **Vue 3 (frontend)** + **Docker** + **Playwright E2E**.
 
-```
-shipping-calculator/
-├── backend/                # Symfony API (Core logic)
-│   ├── config/             # Configuration files
-│   ├── src/                # Source code
-│   │   ├── Application/    # Application Layer (Services)
-│   │   ├── Domain/         # Domain Layer (Models, Interfaces)
-│   │   └── Infrastructure/ # Infrastructure Layer (Controllers, WebSocket, Strategies)
-│   └── ...
-├── frontend/               # Vue.js UI
-│   ├── src/                # Vue components and logic
-│   └── ...
-├── docker/                 # Docker config (php, nginx, ui)
-├── docs/                   # Documentation (C4 models, API spec)
-├── CI/CD/                  # Deployment & Test scripts
-├── E2E/                    # Playwright End-to-End tests
-├── logs/                   # Application logs
-├── docker-compose.yml      # Orchestration
-└── README.md
-```
-
-
-## Requirements
-- Docker
-- Docker Compose
-
-## Installation and execution
-
-1. **Clone repository**
+### Quick start
+1. Build frontend assets:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   cd frontend
+   npm install
+   npm run build
    ```
-
-2. **Run containers**
+2. Start containers:
    ```bash
    docker-compose up -d --build
    ```
 
-3. **Access the application**
-   - Frontend: [http://localhost:8080](http://localhost:8080)
-   - API: [http://localhost:8080/api](http://localhost:8080/api) (via Nginx proxy)
+Access points:
+- Frontend: `http://localhost:8080`
+- API: `http://localhost:8080/api`
+- Swagger UI: `http://localhost:8080/api/doc`
+- OpenAPI JSON: `http://localhost:8080/api/doc.json`
+- WebSocket: `ws://localhost:8081`
 
-4. **Run tests**
-   
-   The project contains scripts to run tests. The main script runs unit tests for the backend and E2E tests for the frontend.
+### Full project file tree (with file descriptions)
 
-   **Automatic run of all tests:**
-   ```bash
-   ./CI/CD/test.sh
-   ```
+```text
+.
+├── .gitignore                                 # Git ignored files list
+├── Coding Test — Junior PHP Developer (Symfony) (1).pdf  # Original coding task
+├── docker-compose.yml                         # Container orchestration
+├── EXECUTION_REPORT.md                        # Execution/report notes
+├── LICENSE                                    # Project license
+├── README.md                                  # Main documentation
+├── deploy_to_github.ps1                       # PowerShell script for GitHub deploy
+├── force_push.ps1                             # PowerShell force-push helper
+│
+├── backend/                                   # Symfony backend
+│   ├── .env                                   # Base environment variables
+│   ├── .env.dev                               # Dev environment variables
+│   ├── .gitignore                             # Backend gitignore
+│   ├── composer.json                          # PHP dependencies/autoload
+│   ├── composer.lock                          # Locked PHP dependency versions
+│   ├── symfony.lock                           # Symfony recipes lock
+│   ├── bin/
+│   │   └── console                            # Symfony CLI entrypoint
+│   ├── config/
+│   │   ├── bundles.php                        # Registered Symfony bundles
+│   │   ├── preload.php                        # Preload config
+│   │   ├── routes.yaml                        # App routes
+│   │   ├── services.yaml                      # DI service wiring
+│   │   ├── packages/
+│   │   │   ├── cache.yaml                     # Cache settings
+│   │   │   ├── framework.yaml                 # Framework settings
+│   │   │   ├── monolog.yaml                   # Logging settings
+│   │   │   ├── nelmio_api_doc.yaml            # Swagger/OpenAPI config
+│   │   │   ├── nelmio_cors.yaml               # CORS config
+│   │   │   ├── routing.yaml                   # Routing package settings
+│   │   │   └── validator.yaml                 # Validation rules config
+│   │   └── routes/
+│   │       ├── framework.yaml                 # Framework default routes
+│   │       └── nelmio_api_doc.yaml            # Routes for API docs
+│   ├── logs/                                  # Backend logs
+│   ├── public/
+│   │   └── index.php                          # Front controller
+│   ├── src/
+│   │   ├── Kernel.php                         # Symfony kernel
+│   │   ├── Application/
+│   │   │   └── ShippingService.php            # Core shipping calculation service
+│   │   ├── Controller/
+│   │   │   └── .gitignore                     # Placeholder for empty directory
+│   │   ├── Domain/
+│   │   │   ├── ShippingStrategyInterface.php  # Strategy contract
+│   │   │   └── Model/
+│   │   │       └── ShippingRequest.php        # Request model + validation constraints
+│   │   └── Infrastructure/
+│   │       ├── Controller/
+│   │       │   ├── ApiDocController.php       # Swagger UI endpoint
+│   │       │   └── ShippingController.php     # REST shipping endpoint
+│   │       ├── EventListener/
+│   │       │   └── CorsAccessControlListener.php # CORS whitelist/blacklist guard
+│   │       ├── Strategy/
+│   │       │   ├── PackGroupStrategy.php      # PackGroup shipping strategy
+│   │       │   └── TransCompanyStrategy.php   # TransCompany shipping strategy
+│   │       └── WebSocket/
+│   │           ├── RunWebSocketServerCommand.php # CLI command to start WS server
+│   │           └── ShippingMessageHandler.php # WS message handler
+│   └── var/                                   # Symfony cache/temp files
+│
+├── CI/
+│   └── CD/
+│       ├── deploy.sh                          # Deployment script
+│       └── test.sh                            # Test run script
+│
+├── docker/
+│   ├── nginx/
+│   │   ├── default.conf                       # Nginx reverse proxy/static config
+│   │   └── Dockerfile                         # Nginx image definition
+│   ├── php/
+│   │   └── Dockerfile                         # PHP-FPM/Symfony image definition
+│   └── ui/
+│       └── Dockerfile                         # Frontend build/runtime image
+│
+├── docs/
+│   ├── api.yaml                               # OpenAPI specification
+│   ├── c4-model.md                            # C4 model (levels 1-3 + level 4 overview)
+│   ├── c4-level4-code.md                      # Detailed C4 Level 4 (Code) implementation
+│   └── file-graph.md                          # Mermaid file-structure graph
+│
+├── E2E/
+│   ├── package.json                           # E2E dependencies
+│   ├── package-lock.json                      # E2E lock file
+│   ├── playwright.config.ts                   # Playwright configuration
+│   ├── README.md                              # E2E documentation
+│   ├── tests/
+│   │   └── shipping.spec.ts                   # Shipping calculator E2E tests
+│   ├── playwright-report/                     # Generated Playwright HTML reports
+│   └── test-results/                          # Generated test artifacts
+│
+├── frontend/
+│   ├── index.html                             # App HTML entrypoint
+│   ├── package.json                           # Frontend dependencies
+│   ├── package-lock.json                      # Frontend lock file
+│   ├── postcss.config.js                      # PostCSS configuration
+│   ├── tailwind.config.js                     # Tailwind configuration
+│   ├── vite.config.js                         # Vite configuration
+│   └── src/
+│       ├── App.vue                            # Root Vue component
+│       ├── main.js                            # App bootstrap
+│       ├── style.css                          # Global styles
+│       └── components/
+│           └── ShippingCalculator.vue         # Main calculator component (HTTP + WS)
+│
+├── logs/                                      # Global/host logs directory
+├── DeployFinal/                               # Temporary deployment directory (currently empty)
+└── DeployTemp/                                # Temporary deployment directory (currently empty)
+```
 
-   **Manual run of E2E tests (Playwright):**
-   For detailed UI test debugging, use the following commands:
-   ```bash
-   cd E2E
-   npm install        # Install dependencies (first run)
-   npx playwright test # Run tests in headless mode
-   npx playwright test --ui # Run in interactive mode with UI
-   ```
+### C4 documentation
+- Levels 1–3: `docs/c4-model.md`
+- Level 4 implementation (Code): `docs/c4-level4-code.md`
 
-## Architecture
-The project is built on Clean Architecture and SOLID principles.
-The **Strategy** pattern is used to implement shipping cost calculation logic for different carriers, allowing easy addition of new ones without changing existing code.
-
-### SOLID Implementation and Interfaces
-SOLID principles are fully observed to ensure system flexibility and extensibility:
-
-- **Single Responsibility Principle (SRP)**:
-  - `ShippingController`: Responsible only for handling HTTP requests.
-  - `ShippingService`: Manages strategy selection.
-  - Strategies (`TransCompanyStrategy`, `PackGroupStrategy`): Contain only price calculation logic.
-
-- **Open/Closed Principle (OCP)**:
-  - System is open for extension: a new carrier is added by creating a new strategy class.
-  - System is closed for modification: service code does not change when adding new carriers.
-
-- **Liskov Substitution Principle (LSP)**:
-  - All strategies implement `ShippingStrategyInterface` and are interchangeable.
-
-- **Interface Segregation Principle (ISP)**:
-  - `ShippingStrategyInterface` contains only necessary methods (`calculate`, `supports`).
-
-- **Dependency Inversion Principle (DIP)**:
-  - `ShippingService` depends on abstraction (`ShippingStrategyInterface`), not concrete implementations.
-
-Detailed architecture documentation is available in [docs/c4-model.md](docs/c4-model.md).
-
----
-
-# Status of Implementation / Статус Реализации
-
-## ✅ Implemented Features / Реализовано
-
-### 1. Backend (Symfony 6.4 + PHP 8.2)
-- **Clean Architecture**: Domain, Application, Infrastructure layers.
-- **Strategy Pattern**: `TransCompany` (>10kg: 100€, <=10kg: 20€), `PackGroup` (1€/kg).
-- **API**: REST Controller (`POST /api/shipping/calculate`).
-- **WebSocket**: Real-time server (Ratchet) on port 8081.
-- **Security**: Custom CORS Listener (`CorsAccessControlListener`) with **Blacklist/Whitelist** support.
-- **Logging**: Monolog with `RotatingFileHandler` (logs to `logs/app.log`).
-- **Docs**: Swagger/OpenAPI integration.
-
-### 2. Frontend (Vue.js 3 + Tailwind CSS)
-- **UI**: Premium design shipping calculator.
-- **Transports**: Support for both **HTTP** (REST) and **WebSocket** communication.
-- **UX**: Real-time status updates and error handling.
-
-### 3. DevOps & Infrastructure
-- **Docker**: Nginx, PHP-FPM, Node.js, WebSocket containers.
-- **CI/CD**: Deployment and test scripts (`deploy.sh`, `test.sh`).
-- **Deployment Plan**: Detailed guide for `ho.ua` (VPS/Shared) in `DEPLOY_PLAN.md`.
-
-### 4. QA & Testing
-- **E2E**: Playwright tests covering calculation scenarios and validation.
-
-## ⏳ Pending / Ожидается
-- **Environment**: Requires `docker-compose up` execution on the host machine.
-- **Tests**: Run `./CI/CD/test.sh` after containers are up.
+### Tests
+```bash
+./CI/CD/test.sh
+```
 
