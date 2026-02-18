@@ -159,6 +159,11 @@
 
 #### Явный запуск unit и integration тестов (PHPUnit)
 
+Расположение тестов в проекте:
+- Unit: `backend/tests/Unit/`
+- Integration: `backend/tests/Integration/`
+- Тестовый bootstrap: `backend/tests/bootstrap.php`
+
 ```bash
 cd backend
 composer install
@@ -177,6 +182,8 @@ composer install
 ```bash
 docker-compose exec php ./bin/phpunit tests
 ```
+
+Также эти каталоги добавлены в графическую схему структуры проекта: `docs/file-graph.md`.
 
 #### Рекомендации по запуску тестов
 
@@ -371,6 +378,11 @@ Access points:
 
 #### Explicit unit and integration test runs (PHPUnit)
 
+Test locations in the project:
+- Unit: `backend/tests/Unit/`
+- Integration: `backend/tests/Integration/`
+- Test bootstrap: `backend/tests/bootstrap.php`
+
 ```bash
 cd backend
 composer install
@@ -389,6 +401,8 @@ composer install
 ```bash
 docker-compose exec php ./bin/phpunit tests
 ```
+
+These test directories are also reflected in the project file graph: `docs/file-graph.md`.
 
 #### Test run recommendations
 
