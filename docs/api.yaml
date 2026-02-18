@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Shipping Cost Calculator API
+  description: API для расчета стоимости доставки различными перевозчиками.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /api/shipping/calculate:
+    post:
+      summary: Calculate shipping cost
+      operationId: calculateShippingCost
+      tags:
+        - Shipping
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingRequest'
+      responses:
+        '200':
+          description: Successful calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingResponse'
+        '400':
+          description: Validation error or unsupported carrier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ShippingRequest:
+      type: object
+      required:
+        - carrier
+        - weightKg
+      properties:
+        carrier:
+          type: string
+          example: transcompany
+          description: Slug or ID of the carrier
+        weightKg:
+          type: number
+          format: float
+          example: 12.5
+          description: Weight of the parcel in kg
+    ShippingResponse:
+      type: object
+      properties:
+        carrier:
+          type: string
+          example: transcompany
+        weightKg:
+          type: number
+          format: float
+          example: 12.5
+        currency:
+          type: string
+          example: EUR
+        price:
+          type: number
+          format: float
+          example: 100.0
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Unsupported carrier

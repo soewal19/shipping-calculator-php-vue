@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: 
+      context: ./docker/nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./frontend/dist:/app/dist
+    depends_on:
+      - php
+      - ui
+
+  php:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./backend:/var/www/html
+      - ./logs:/var/www/html/logs
+    user: "1000:1000"
+
+  websocket:
+    build:
+      context: ./docker/php
+    volumes:
+      - ./backend:/var/www/html
+    ports:
+      - "8081:8081"
+    command: php bin/console run:websocket
+    user: "1000:1000"
+    depends_on:
+      - php
+
+  ui:
+    build:
+      context: ./docker/ui
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173" # Vite default port
+    # In production, this would be a multi-stage build served by Nginx, 
+    # but for dev we run the dev server.
+    # To simulate production build for Nginx:
+    # command: sh -c "npm install && npm run build"
