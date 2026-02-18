@@ -148,6 +148,26 @@
 └── DeployTemp/                                # Временная/служебная папка деплоя (сейчас пусто)
 ```
 
+### Графическая схема (Mermaid)
+
+```mermaid
+graph TD
+    Backend["backend/"] --> Src["src/"]
+    Backend --> Tests["tests/"]
+
+    Tests --> Unit["Unit/"]
+    Tests --> Integration["Integration/"]
+    Tests --> Bootstrap["bootstrap.php"]
+
+    Unit --> U1["Application/ShippingServiceTest.php"]
+    Unit --> U2["Infrastructure/Strategy/PackGroupStrategyTest.php"]
+    Unit --> U3["Infrastructure/Strategy/TransCompanyStrategyTest.php"]
+
+    Integration --> I1["Infrastructure/Controller/ShippingControllerTest.php"]
+```
+
+Полная схема остаётся в: `docs/file-graph.md`.
+
 ### C4-документация
 - Уровни 1–3: `docs/c4-model.md`
 - Реализация 4-го уровня (Code): `docs/c4-level4-code.md`
@@ -366,6 +386,26 @@ Access points:
 ├── DeployFinal/                               # Temporary deployment directory (currently empty)
 └── DeployTemp/                                # Temporary deployment directory (currently empty)
 ```
+
+### Graphical schema (Mermaid)
+
+```mermaid
+graph TD
+    Backend["backend/"] --> Src["src/"]
+    Backend --> Tests["tests/"]
+
+    Tests --> Unit["Unit/"]
+    Tests --> Integration["Integration/"]
+    Tests --> Bootstrap["bootstrap.php"]
+
+    Unit --> U1["Application/ShippingServiceTest.php"]
+    Unit --> U2["Infrastructure/Strategy/PackGroupStrategyTest.php"]
+    Unit --> U3["Infrastructure/Strategy/TransCompanyStrategyTest.php"]
+
+    Integration --> I1["Infrastructure/Controller/ShippingControllerTest.php"]
+```
+
+The full graph remains in: `docs/file-graph.md`.
 
 ### C4 documentation
 - Levels 1–3: `docs/c4-model.md`
