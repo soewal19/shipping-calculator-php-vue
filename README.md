@@ -170,7 +170,7 @@
    - API должен отвечать на `http://localhost:8080/api/shipping/calculate`.
 
 3. **Рекомендуемый порядок**
-   - Сначала backend/unit/integration (если добавлены), затем E2E.
+   - Сначала backend unit/integration (PHPUnit), затем E2E.
    - Базовый сценарий:
    ```bash
    ./CI/CD/test.sh
@@ -361,7 +361,7 @@ Access points:
    - API should respond at `http://localhost:8080/api/shipping/calculate`.
 
 3. **Recommended execution order**
-   - Run backend/unit/integration tests first (if present), then E2E.
+   - Run backend unit/integration tests first (PHPUnit), then E2E.
    - Basic flow:
    ```bash
    ./CI/CD/test.sh

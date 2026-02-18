@@ -72,3 +72,8 @@ components:
         error:
           type: string
           example: Unsupported carrier
+        details:
+          type: array
+          description: Optional list of validation error messages
+          items:
+            type: string

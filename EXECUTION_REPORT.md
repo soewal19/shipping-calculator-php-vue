@@ -27,7 +27,12 @@
 The project follows a standard structure with separate directories for backend, frontend, docker config, and documentation. See `README.md` for the full tree.
 
 ## Verification
-*   **Tests**: E2E tests are implemented using Playwright.
+*   **Tests**:
+    *   Backend PHPUnit coverage added:
+        *   Unit tests for pricing strategies (`TransCompanyStrategy`, `PackGroupStrategy`)
+        *   Unit tests for `ShippingService`
+        *   Integration tests for `/api/shipping/calculate` endpoint behavior
+    *   Frontend E2E tests are implemented using Playwright.
 *   **Manual**: Validated via browser and API clients.
 
 ## Next Steps

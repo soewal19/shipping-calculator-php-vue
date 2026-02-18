@@ -57,3 +57,46 @@ C4Component
     Rel(shipping_service, packgroup_strategy, "Uses")
     Rel(shipping_controller, dto, "Uses")
 ```
+
+## 4. Code Level (Class Diagram)
+
+```mermaid
+classDiagram
+    class ShippingController {
+        -ShippingService shippingService
+        +calculate(Request request): JsonResponse
+    }
+
+    class ShippingService {
+        -iterable strategies
+        -LoggerInterface logger
+        +calculate(ShippingRequest request): float
+    }
+
+    class ShippingStrategyInterface {
+        <<interface>>
+        +calculate(float weightKg): float
+        +supports(string carrier): bool
+    }
+
+    class TransCompanyStrategy {
+        +calculate(float weightKg): float
+        +supports(string carrier): bool
+    }
+
+    class PackGroupStrategy {
+        +calculate(float weightKg): float
+        +supports(string carrier): bool
+    }
+
+    class ShippingRequest {
+        +string carrier
+        +float weightKg
+    }
+
+    ShippingController --> ShippingService : uses
+    ShippingController ..> ShippingRequest : creates
+    ShippingService --> ShippingStrategyInterface : uses
+    TransCompanyStrategy ..|> ShippingStrategyInterface : implements
+    PackGroupStrategy ..|> ShippingStrategyInterface : implements
+```
